@@ -6,20 +6,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int CAMERA_REQUEST = 1888;
+    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    ImageView ivMostrarFoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +39,20 @@ public class MainActivity extends AppCompatActivity {
         permisos.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         permisos.add(Manifest.permission.READ_EXTERNAL_STORAGE);
         permisos.add(Manifest.permission.WRITE_CALENDAR);
-
-
         getPermission(permisos);
+
+
+        ivMostrarFoto = (ImageView)this.findViewById(R.id.ivMostrarFoto);
+        Button btnCamara = (Button) this.findViewById(R.id.btnCamara);
+        btnCamara.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            }
+        });
     }
 
     public void getPermission(ArrayList<String> permisosSolicitados){
@@ -79,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void BajarDoc(View view){
-        String url = "https://www.uteq.edu.ec/revistacyt/archivositio/instrucciones_arbitros.pdf";
+        String url = "https://www.blyx.com/public/wireless/redesInalambricas.pdf";
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setDescription("PDF");
         request.setTitle("Pdf");
@@ -95,6 +114,16 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this.getApplicationContext(),"Error: "  + e.getMessage(),Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int codigoPeticion, int codigoResultado, Intent data) {
+        super.onActivityResult(codigoPeticion, codigoResultado, data);
+        if (codigoPeticion == CAMERA_REQUEST && codigoResultado == Activity.RESULT_OK)
+        {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            ivMostrarFoto.setImageBitmap(photo);
+        }
     }
 
 

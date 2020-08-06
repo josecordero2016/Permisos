@@ -12,8 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="73dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="85dp"
         android:onClick="BajarDoc"
         android:text="Descargar PDF" />
 
@@ -26,4 +26,25 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="143dp"
         android:text="Mostrar Descargas" />
+
+    <Button
+        android:id="@+id/btnCamara"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="198dp"
+        android:text="CÁMARA" />
+
+    <ImageView
+        android:id="@+id/ivMostrarFoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="22dp"
+        android:layout_marginBottom="213dp"
+        android:scaleType="centerCrop"
+        tools:srcCompat="@tools:sample/avatars" />
 </RelativeLayout>
