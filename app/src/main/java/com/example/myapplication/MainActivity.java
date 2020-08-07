@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     ImageView ivMostrarFoto;
+    Intent intent_fm;
+    String direccion_desc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,10 +108,19 @@ public class MainActivity extends AppCompatActivity {
                 request.allowScanningByMediaScanner();
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
             }
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "filedownload.pdf");
+        intent_fm = new Intent(Intent.ACTION_GET_CONTENT);
+        intent_fm.setType("*/*");
+        startActivityForResult(intent_fm, 10);
+        request.setDestinationInExternalPublicDir(direccion_desc, "filedownload.pdf");
+        // descarga pero se cierra la app
         DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         try {
             manager.enqueue(request);
+
+
+
+
+
         } catch (Exception e) {
             Toast.makeText(this.getApplicationContext(),"Error: "  + e.getMessage(),Toast.LENGTH_LONG).show();
         }
@@ -123,6 +134,11 @@ public class MainActivity extends AppCompatActivity {
         {
             Bitmap photo = (Bitmap) data.getExtras().get("data");
             ivMostrarFoto.setImageBitmap(photo);
+        }
+
+        if(codigoPeticion==10){
+            direccion_desc = data.getData().getPath();
+            Toast.makeText(getApplicationContext(),direccion_desc,Toast.LENGTH_LONG).show();
         }
     }
 
