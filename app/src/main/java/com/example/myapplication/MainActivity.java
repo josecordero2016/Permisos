@@ -21,12 +21,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int CAMERA_REQUEST = 1888;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    public static String DIRECTORY_DOWNLOADS = "Uno";
     ImageView ivMostrarFoto;
     Intent intent_fm;
     String direccion_desc;
@@ -92,39 +94,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void MostrarDescargas(View view){
-
+    public void MostrarDescargas(View view)
+    {
         Intent intent = new Intent();
         intent.setAction(DownloadManager.ACTION_VIEW_DOWNLOADS);
         startActivity(intent);
-
     }
-    public void BajarDoc(View view){
-        String url = "https://www.blyx.com/public/wireless/redesInalambricas.pdf";
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setDescription("PDF");
-        request.setTitle("Pdf");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-            }
-        intent_fm = new Intent(Intent.ACTION_GET_CONTENT);
-        intent_fm.setType("*/*");
-        startActivityForResult(intent_fm, 10);
-        request.setDestinationInExternalPublicDir(direccion_desc, "filedownload.pdf");
-        // descarga pero se cierra la app
-        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-        try {
-            manager.enqueue(request);
-
-
-
-
-
-        } catch (Exception e) {
+    public void BajarDoc(View view)
+    {
+        try
+        {
+            intent_fm = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            startActivityForResult(intent_fm, 999);
+        } catch (Exception e)
+        {
             Toast.makeText(this.getApplicationContext(),"Error: "  + e.getMessage(),Toast.LENGTH_LONG).show();
         }
-
     }
 
     @Override
@@ -136,9 +121,42 @@ public class MainActivity extends AppCompatActivity {
             ivMostrarFoto.setImageBitmap(photo);
         }
 
-        if(codigoPeticion==10){
-            direccion_desc = data.getData().getPath();
-            Toast.makeText(getApplicationContext(),direccion_desc,Toast.LENGTH_LONG).show();
+        if(codigoPeticion==999)
+        {
+            try
+            {
+                direccion_desc = data.getData().getPath();
+                String dir[]= direccion_desc.split("/tree/primary:");
+                String completo = Environment.getExternalStorageDirectory()+"/"+dir[1];
+
+//                completo = completo.substring(1,completo.length());
+                Toast.makeText(getApplicationContext(),"Guardado en: "+completo,Toast.LENGTH_LONG).show();
+
+                String url = "https://www.blyx.com/public/wireless/redesInalambricas.pdf";
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                request.setDescription("PDF");
+                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE | DownloadManager.Request.NETWORK_WIFI);
+                request.setTitle("Pdf");
+                request.setVisibleInDownloadsUi(true);
+
+
+                //    request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+
+
+
+                request.setDestinationInExternalFilesDir(getApplicationContext(),completo,"file.pdf");
+                DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                manager.enqueue(request);
+
+
+            }
+            catch (Exception e)
+            {
+                Toast.makeText(getApplicationContext(), "ERRROR"+e.toString(),Toast.LENGTH_LONG);
+            }
+
         }
     }
 
